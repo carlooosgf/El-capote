@@ -152,13 +152,23 @@
       color: var(--oro); text-decoration: none;
       white-space: nowrap; min-height: 44px; gap: .4rem;
       display: inline-flex; align-items: center;
-      border: 1px solid rgba(201,168,76,.6);
-      transition: background .3s, color .3s, border-color .3s;
+      position: relative; z-index: 0;
+      isolation: isolate;
+      clip-path: polygon(7px 0%, calc(100% - 7px) 0%, 100% 7px, 100% calc(100% - 7px), calc(100% - 7px) 100%, 7px 100%, 0% calc(100% - 7px), 0% 7px);
+      transition: color .3s;
     }
-    .nav-reserva:hover {
-      background: var(--oro); color: var(--carbon);
-      border-color: var(--oro);
+    .nav-reserva::before {
+      content: ''; position: absolute; inset: 0; z-index: -2;
+      background: var(--oro); clip-path: inherit;
     }
+    .nav-reserva::after {
+      content: ''; position: absolute; inset: 1px; z-index: -1;
+      background: rgba(26,16,8,.97);
+      clip-path: polygon(6px 0%, calc(100% - 6px) 0%, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0% calc(100% - 6px), 0% 6px);
+      transition: opacity .3s;
+    }
+    .nav-reserva:hover { color: var(--carbon); }
+    .nav-reserva:hover::after { opacity: 0; }
 
     /* ── Hamburger ── */
     .hamburger {
@@ -808,18 +818,34 @@
 
       .info-bar { padding: 1.5rem var(--pad-x); }
       .info-inner {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: unset;
-        row-gap: 2.5rem;
+        display: flex; flex-direction: column; gap: 2.5rem;
       }
       .info-vline { display: none; }
+      /* En tablet/móvil cada columna vuelve a flex normal (sin subgrid) */
+      .info-col-address,
+      .info-col-hours,
+      .info-col-phone {
+        display: flex; flex-direction: column;
+        align-items: center; text-align: center;
+        grid-row: auto; gap: 0;
+      }
+      .info-col-label {
+        margin-bottom: 1rem;
+      }
+      .info-col-content {
+        flex: 1;
+      }
+      .info-col-action {
+        margin-top: 1.2rem;
+      }
       .info-col-address {
-        grid-column: 1 / -1;
-        grid-row: auto;
-        padding-bottom: 2rem;
+        padding-bottom: 2.5rem;
         border-bottom: 1px solid rgba(201,168,76,.12);
       }
-      .info-col-hours, .info-col-phone { grid-row: auto; }
+      .info-col-hours {
+        padding-bottom: 2.5rem;
+        border-bottom: 1px solid rgba(201,168,76,.12);
+      }
 
       .reviews-grid { grid-template-columns: 1fr 1fr; }
       .modal-content { grid-template-columns: 1fr; gap: 1.5rem; }
@@ -847,17 +873,9 @@
       }
       .about-frame { aspect-ratio: 4/3; min-height: 210px; }
 
-      /* Info: columna única */
+      /* Info: ya heredado del tablet, solo ajustes de padding */
       .info-bar { padding: 1rem var(--pad-x); }
       .info-frame { padding: 1.5rem 1.2rem; }
-      .info-inner { grid-template-columns: 1fr; grid-template-rows: unset; row-gap: 2rem; }
-      .info-col-address, .info-col-hours, .info-col-phone {
-        grid-column: auto; grid-row: auto;
-      }
-      .info-col-hours {
-        padding-bottom: 2rem;
-        border-bottom: 1px solid rgba(201,168,76,.12);
-      }
 
       /* Reviews: columna única */
       .reviews-grid { grid-template-columns: 1fr; }
